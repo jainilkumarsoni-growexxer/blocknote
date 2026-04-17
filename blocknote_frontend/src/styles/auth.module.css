@@ -1,0 +1,273 @@
+/* .page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-bg-tertiary, #f5f5f3);
+}
+
+.card {
+  background: #ffffff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.75rem;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  background: #2c2c2a;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* Headings */
+.heading {
+  font-size: 20px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 0.35rem;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b6b6b;
+  margin-bottom: 1.75rem;
+}
+
+/* Server error banner */
+.serverError {
+  background: #fff0f0;
+  border: 0.5px solid #f09595;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #a32d2d;
+  margin-bottom: 1rem;
+}
+
+/* Fields */
+.field {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b6b6b;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #ffffff;
+  border: 0.5px solid rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus {
+  border-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.inputError {
+  border-color: #e24b4a;
+}
+
+.inputError:focus {
+  border-color: #e24b4a;
+  box-shadow: 0 0 0 3px rgba(226, 75, 74, 0.1);
+}
+
+.errorMsg {
+  font-size: 12px;
+  color: #a32d2d;
+  margin-top: 5px;
+}
+
+/* Password field wrapper */
+.passwordWrap {
+  position: relative;
+}
+
+.passwordWrap .input {
+  padding-right: 40px;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9a9a9a;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.eyeBtn:hover {
+  color: #4a4a4a;
+}
+
+/* Password strength */
+.strengthWrap {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.strengthBar {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.strengthSeg {
+  height: 3px;
+  flex: 1;
+  border-radius: 2px;
+  transition: background 0.2s ease;
+}
+
+.strengthLabel {
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 36px;
+}
+
+/* Submit button */
+.submitBtn {
+  width: 100%;
+  height: 38px;
+  background: #2c2c2a;
+  color: #f1efe8;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 1.25rem;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.submitBtn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.25rem 0;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 0.5px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dividerText {
+  font-size: 12px;
+  color: #9a9a9a;
+}
+
+/* Bottom links */
+.switchLink {
+  text-align: center;
+  font-size: 14px;
+  color: #6b6b6b;
+}
+
+.link {
+  color: #1a1a1a;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+}
+
+.link:hover {
+  border-color: rgba(0, 0, 0, 0.7);
+}
+
+.terms {
+  font-size: 12px;
+  color: #9a9a9a;
+  text-align: center;
+  margin-top: 1.25rem;
+  line-height: 1.6;
+}
+
+
+
+
+/* labelRow — sits label and forgot-password link side by side */
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+/* override the default label margin since labelRow handles spacing */
+.labelRow .label {
+  margin-bottom: 0;
+}
+
+.forgotLink {
+  font-size: 12px;
+  color: #6b6b6b;
+  text-decoration: none;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
+  transition: color 0.15s;
+}
+
+.forgotLink:hover {
+  color: #1a1a18;
+  border-color: rgba(0, 0, 0, 0.5);
+}
