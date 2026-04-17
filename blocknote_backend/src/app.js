@@ -6,12 +6,15 @@ import documentRoutes from './routes/documentRoutes.js';
 import blockRoutes from './routes/blockRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 import shareRoutes from './routes/shareRoutes.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 app.use(express.json());
