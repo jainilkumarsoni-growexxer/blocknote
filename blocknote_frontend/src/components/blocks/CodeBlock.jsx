@@ -1,5 +1,4 @@
 
-
 import { useRef, useEffect } from "react";
 import { getCursorOffset } from "../../utils/editorHelpers";
 
@@ -21,8 +20,9 @@ export const CodeBlock = ({
   useEffect(() => {
     if (ref.current) {
       registerRef(ref.current);
-      if (block.content.text !== ref.current.innerText) {
-        ref.current.innerText = block.content.text || "";
+      const currentText = block.content.text || "";
+      if (ref.current.innerText !== currentText) {
+        ref.current.innerText = currentText;
       }
     }
     return () => registerRef(null);
@@ -30,7 +30,7 @@ export const CodeBlock = ({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || readOnly) return;
     const handleKeyUp = (e) => {
       if (e.key === "Backspace" || e.key === "Delete") {
         if (el.innerText.trim() === "" && el.innerHTML !== "") {
@@ -40,9 +40,10 @@ export const CodeBlock = ({
     };
     el.addEventListener("keyup", handleKeyUp);
     return () => el.removeEventListener("keyup", handleKeyUp);
-  }, []);
+  }, [readOnly]);
 
   const handleInput = (e) => {
+    if (readOnly) return;
     const text = e.currentTarget.innerText;
     onUpdate({ text });
   };
@@ -53,26 +54,25 @@ export const CodeBlock = ({
   };
 
   const handleKeyDown = (e) => {
+    if (readOnly) return;
     const selection = window.getSelection();
     if (selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
     const text = e.currentTarget.innerText || "";
     const cursorOffset = getCursorOffset(range, ref.current);
 
-    // Slash command
     if (e.key === "/" && isReallyEmpty(e.currentTarget) && !isMenuOpen) {
       e.preventDefault();
       const rect = e.target.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       let y = rect.bottom + 4;
-      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 4;
+      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 80;
       let x = rect.left;
-      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 8;
+      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 30;
       onSlashCommand({ x, y });
       return;
     }
 
-    // Tab: insert 2 spaces
     if (e.key === "Tab") {
       e.preventDefault();
       const before = text.slice(0, cursorOffset);
@@ -106,24 +106,19 @@ export const CodeBlock = ({
       return;
     }
 
-    // Enter: insert newline (stay in code block)
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      // Use execCommand for reliable newline insertion with proper cursor placement
       document.execCommand('insertLineBreak');
-      // Trigger content update
       onUpdate({ text: ref.current.innerText });
       return;
     }
 
-    // Shift+Enter: create new paragraph block below
     if (e.key === "Enter" && e.shiftKey) {
       e.preventDefault();
       onEnter(cursorOffset, text);
       return;
     }
 
-    // Backspace
     if (e.key === "Backspace") {
       const atStart = cursorOffset === 0;
       onBackspace(atStart, text);
@@ -136,7 +131,11 @@ export const CodeBlock = ({
         ref={ref}
         contentEditable={!isMenuOpen && !readOnly}
         suppressContentEditableWarning
-        className="min-h-[1.8em] w-full whitespace-pre-wrap text-foreground outline-none empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]"
+        className={`min-h-[1.8em] w-full whitespace-pre-wrap text-foreground outline-none ${
+          !readOnly
+            ? "empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]"
+            : ""
+        }`}
         data-placeholder="Write code..."
         onInput={handleInput}
         onKeyDown={handleKeyDown}

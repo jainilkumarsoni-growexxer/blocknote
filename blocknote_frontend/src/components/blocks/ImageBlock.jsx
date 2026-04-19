@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { Link2 } from "lucide-react";
 import { Input, Button } from "../ui";
 
-export const ImageBlock = ({ block, onUpdate }) => {
+export const ImageBlock = ({ block, onUpdate, readOnly = false }) => {
   const [isEditing, setIsEditing] = useState(!block.content.url);
   const [url, setUrl] = useState(block.content.url || "");
 
@@ -13,6 +14,20 @@ export const ImageBlock = ({ block, onUpdate }) => {
       setIsEditing(false);
     }
   };
+
+  if (readOnly) {
+    // Read‑only: just display the image without edit controls
+    if (!block.content.url) return null;
+    return (
+      <div className="relative">
+        <img
+          src={block.content.url}
+          alt="Embedded"
+          className="max-h-96 rounded-lg border border-border object-contain"
+        />
+      </div>
+    );
+  }
 
   if (isEditing) {
     return (

@@ -1,7 +1,4 @@
 
-
-
-
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -21,7 +18,6 @@ export const ShareViewPage = () => {
     const fetchShared = async () => {
       try {
         const response = await api.get(`/documents/share/${token}`);
-        // Expecting { document: {...}, blocks: [...] }
         setDocument(response.data.document);
         setBlocks(response.data.blocks || []);
       } catch (err) {
@@ -58,13 +54,26 @@ export const ShareViewPage = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="relative z-10 min-h-screen px-6 py-8"
+        className="relative z-10 flex h-screen flex-col px-6 py-6"
       >
-        <div className="mx-auto max-w-4xl">
-          <h1 className="mb-8 text-4xl font-semibold tracking-tight text-gradient">
-            {document.title}
-          </h1>
-          <ReadOnlyEditor blocks={blocks} />
+        {/* Scrollable Editor Box */}
+        <div className="mx-auto w-full max-w-6xl flex-1 overflow-hidden rounded-xl border border-border bg-background-base/50 backdrop-blur-sm">
+          <div className="flex h-full flex-col">
+            {/* Fixed Title */}
+            <div className="shrink-0 px-6 pt-6 ml-3 mt-2 mb-3">
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+                {document.title}
+              </h1>
+              <p className="mt-1 text-sm text-foreground-muted">
+                Read‑only shared document
+              </p>
+            </div>
+
+            {/* Scrollable Blocks Area */}
+            <div className="flex-1 overflow-y-auto px-6 pb-6">
+              <ReadOnlyEditor blocks={blocks} />
+            </div>
+          </div>
         </div>
       </motion.div>
     </>

@@ -26,8 +26,9 @@ const HeadingBlock = ({
   useEffect(() => {
     if (ref.current) {
       registerRef(ref.current);
-      if (block.content.text !== ref.current.innerText) {
-        ref.current.innerText = block.content.text || "";
+      const currentText = block.content.text || "";
+      if (ref.current.innerText !== currentText) {
+        ref.current.innerText = currentText;
       }
     }
     return () => registerRef(null);
@@ -35,7 +36,7 @@ const HeadingBlock = ({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || readOnly) return;
     const handleKeyUp = (e) => {
       if (e.key === "Backspace" || e.key === "Delete") {
         if (el.innerText.trim() === "" && el.innerHTML !== "") {
@@ -45,19 +46,21 @@ const HeadingBlock = ({
     };
     el.addEventListener("keyup", handleKeyUp);
     return () => el.removeEventListener("keyup", handleKeyUp);
-  }, []);
+  }, [readOnly]);
+
+  const handleInput = (e) => {
+    if (readOnly) return;
+    const text = e.currentTarget.innerText;
+    onUpdate({ text });
+  };
 
   const isReallyEmpty = (element) => {
     const text = element.innerText || "";
     return text.trim().length === 0;
   };
 
-  const handleInput = (e) => {
-    const text = e.currentTarget.innerText;
-    onUpdate({ text });
-  };
-
   const handleKeyDown = (e) => {
+    if (readOnly) return;
     const selection = window.getSelection();
     if (selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
@@ -69,9 +72,9 @@ const HeadingBlock = ({
       const rect = e.target.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       let y = rect.bottom + 4;
-      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 4;
+      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 85;
       let x = rect.left;
-      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 8;
+      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 30;
       onSlashCommand({ x, y });
       return;
     }
@@ -90,7 +93,11 @@ const HeadingBlock = ({
       ref={ref}
       contentEditable={!isMenuOpen && !readOnly}
       suppressContentEditableWarning
-      className={`${sizeClasses[level]} w-full text-foreground outline-none empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]`}
+      className={`${sizeClasses[level]} w-full text-foreground outline-none ${
+        !readOnly
+          ? "empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]"
+          : ""
+      }`}
       data-placeholder={`Heading ${level}`}
       onInput={handleInput}
       onKeyDown={handleKeyDown}

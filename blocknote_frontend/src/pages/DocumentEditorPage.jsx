@@ -94,7 +94,7 @@ export const DocumentEditorPage = () => {
         <div className="mx-auto w-full max-w-6xl flex-1 overflow-hidden rounded-xl border border-border bg-background-base/50 backdrop-blur-sm">
           <div className="flex h-full flex-col">
             {/* Fixed Title */}
-            <div className="shrink-0 px-6 pt-6">
+            <div className="shrink-0 px-6 pt-6 ml-2 mt-2 mb-2">
               <input
                 type="text"
                 value={title}

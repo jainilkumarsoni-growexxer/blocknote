@@ -12,16 +12,18 @@ export const ParagraphBlock = ({
   onBackspace,
   onSlashCommand,
   registerRef,
-  isMenuOpen, // new prop
+  isMenuOpen,
   readOnly = false,
 }) => {
   const ref = useRef(null);
 
+  // Always set initial content and sync when content changes
   useEffect(() => {
     if (ref.current) {
       registerRef(ref.current);
-      if (block.content.text !== ref.current.innerText) {
-        ref.current.innerText = block.content.text || "";
+      const currentText = block.content.text || "";
+      if (ref.current.innerText !== currentText) {
+        ref.current.innerText = currentText;
       }
     }
     return () => registerRef(null);
@@ -29,7 +31,7 @@ export const ParagraphBlock = ({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || readOnly) return;
     const handleKeyUp = (e) => {
       if (e.key === "Backspace" || e.key === "Delete") {
         if (el.innerText.trim() === "" && el.innerHTML !== "") {
@@ -39,36 +41,35 @@ export const ParagraphBlock = ({
     };
     el.addEventListener("keyup", handleKeyUp);
     return () => el.removeEventListener("keyup", handleKeyUp);
-  }, []);
+  }, [readOnly]);
+
+  const handleInput = (e) => {
+    if (readOnly) return;
+    const text = e.currentTarget.innerText;
+    onUpdate({ text });
+  };
 
   const isReallyEmpty = (element) => {
     const text = element.innerText || "";
     return text.trim().length === 0;
   };
 
-  const handleInput = (e) => {
-    const text = e.currentTarget.innerText;
-    onUpdate({ text });
-  };
-
   const handleKeyDown = (e) => {
-    console.log("keyDown");
-
+    if (readOnly) return;
     const selection = window.getSelection();
     if (selection.rangeCount === 0) return;
     const range = selection.getRangeAt(0);
     const text = e.currentTarget.innerText || "";
     const cursorOffset = getCursorOffset(range, ref.current);
 
-    if (e.key === "/" && isReallyEmpty(e.currentTarget) ) {
-      console.log(onSlashCommand);
+    if (e.key === "/" && isReallyEmpty(e.currentTarget) && !isMenuOpen) {
       e.preventDefault();
       const rect = e.target.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       let y = rect.bottom + 4;
-      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 80;
+      if (spaceBelow < MENU_HEIGHT) y = rect.top - MENU_HEIGHT - 85;
       let x = rect.left;
-      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 8;
+      if (x + MENU_WIDTH > window.innerWidth) x = window.innerWidth - MENU_WIDTH - 30;
       onSlashCommand({ x, y });
       return;
     }
@@ -85,9 +86,13 @@ export const ParagraphBlock = ({
   return (
     <div
       ref={ref}
-      contentEditable={!isMenuOpen && !readOnly} // Disable editing when menu is open
+      contentEditable={!isMenuOpen && !readOnly}
       suppressContentEditableWarning
-      className="min-h-[1.8em] w-full text-base leading-relaxed text-foreground outline-none empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]"
+      className={`min-h-[1.8em] w-full text-base leading-relaxed text-foreground outline-none ${
+        !readOnly
+          ? "empty:before:text-foreground-subtle/50 empty:before:content-[attr(data-placeholder)]"
+          : ""
+      }`}
       data-placeholder="Type '/' for commands"
       onInput={handleInput}
       onKeyDown={handleKeyDown}
