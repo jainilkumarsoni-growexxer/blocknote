@@ -6,7 +6,7 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
   const cookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: "none",
   };
 
   res.cookie('accessToken', accessToken, {
@@ -26,7 +26,7 @@ export const clearAuthCookies = (res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: 'lax',
+    sameSite: "none",
   };
 
   res.clearCookie('accessToken', { ...cookieOptions, path: '/' });
